@@ -74,7 +74,12 @@ class ProductController extends Controller
                     }
                 })
                 ->addColumn('photo', function ($product) {
-                    return $product->product_photo;
+                    $pict = [];
+                    foreach (json_decode($product->product_photo) as $picture) {
+                        $pict[] = '<img src="/reference/eureka/storage/app/' . $picture->path . '" style="height:120px; width:105px; margin-bottom:10px;"/>';
+                    }
+                    $pict = implode(', ', $pict);
+                    return $pict;
                 })
                 ->rawColumns(['action', 'categories', 'stok', 'photo'])
                 ->make(true);
@@ -96,7 +101,6 @@ class ProductController extends Controller
             'code' => 'required',
             'categories' => 'required',
             'stok' => 'required|numeric',
-            'photo' => 'required|file|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
         if ($validator->fails()) {
@@ -107,70 +111,73 @@ class ProductController extends Controller
         $productName = $request->get('name');
         $productCode = $request->get('code');
         $productStok = $request->get('stok');
-        $categoryId = $request->get('categories');
+        $categoriesId = $request->get('categories');
+
+        $categoryId = explode(",", $categoriesId);
 
         $checkProductCode = \App\Product::where('product_code', '=', $request->get('code'))->first();
 
         if ($checkProductCode === null) {
 
-            if ($request->file('photo')) {
+            /*if ($request->file('images')) { // single image
                 //insert new file
                 $destinationPath = 'public/product_images/'; // upload path
-                $image_path = $request->file('photo')->store($destinationPath);
+                $product_photo = $request->file('images')->store($destinationPath);
+            }*/
+
+            if ($request->TotalImages > 0) {
+
+                for ($x = 0; $x < $request->TotalImages; $x++) {
+
+                    if ($request->hasFile('images' . $x)) {
+                        $file = $request->file('images' . $x);
+
+                        $path = $file->store('public/product_images/');
+                        $name = $file->getClientOriginalName();
+
+                        $product_photo[$x]['name'] = $name;
+                        $product_photo[$x]['path'] = $path;
+                    }
+                }
+
+                $productId = DB::table('products')->insertGetId(
+                    [
+                        'name' => $productName,
+                        'product_code' => $productCode,
+                        'product_photo' =>  json_encode($product_photo)
+                    ]
+                );
+
+                $idStok = DB::table('stok')->insertGetId(
+                    [
+                        'jumlah_barang' => $productStok
+                    ]
+                );
+
+                $stokId = \App\Stok::withTrashed()->findOrFail($idStok);
+                $theProductId = \App\Product::withTrashed()->findOrFail($productId);
+
+                // Save relationship data between product and categories
+                $theProductId->category()->attach($categoryId);
+
+                // Save relationship data between stok and product
+                $stokId->product()->associate($theProductId)->save();
+            } else {
+                $imageValidator = \Validator::make($request->all(), [
+                    'images' => 'required|file|mimes:jpeg,png,jpg,gif,svg',
+                ]);
+                return response()->json(['errors' => $imageValidator->errors()->all()]);
             }
-
-            /*$photo = [];  //store filename in this array.
-            // $total = $request->TotalImages;  no need to check total images.
-            if ($request->file('photo')) {
-                foreach ($request->file('photo') as $file) {
-                    $dir = 'public/product_images/';
-                    $imagename = $file->getClientOriginalName();
-                    $filename = uniqid() . '_' . time() . '.' . $imagename;
-                    $file->move($dir, $filename);
-                    $photo[] = $dir . $filename;
-                    $image_path = implode("|", $photo);
-                }
-            }*/
-
-            /*$photo = [];
-            if ($request->file('photo')) {
-                //insert new file
-                foreach ($request->file('photo') as $file) {
-                    $destinationPath = 'public/product_images/'; // upload path
-                    $photo[] = $file->store($destinationPath);
-                    $image_path = implode("|", $photo);
-                }
-            }*/
-
-            $productId = DB::table('products')->insertGetId(
-                [
-                    'name' => $productName,
-                    'product_code' => $productCode,
-                    'product_photo' => $image_path
-                ]
-            );
-
-            $idStok = DB::table('stok')->insertGetId(
-                [
-                    'jumlah_barang' => $productStok
-                ]
-            );
-
-            $stokId = \App\Stok::withTrashed()->findOrFail($idStok);
-            $theProductId = \App\Product::withTrashed()->findOrFail($productId);
-
-            // Save relationship data between product and categories
-            $theProductId->category()->attach($categoryId);
-
-            // Save relationship data between stok and product
-            $stokId->product()->associate($theProductId)->save();
         } else {
-            // NOT SOLVED YET. Can't display an error message. 
-            //return response()->json(['errors' => 'Duplicate product code!']);
-            //return response()->json(['errors' => ['code' => ['Duplicate product code!']]], 500);
-            //return response()->json(['errors' => $validator->errors()]);
-            //return response()->json(['error' => 'Error msg'], 404);
-            return redirect()->route('products.index')->with('status', 'Code product must be unique');
+            $rules = [
+                'code' => 'required',
+            ];
+
+            $customMessages = [
+                'required' => 'The code product must be unique.'
+            ];
+
+            return response()->json(['errors' => $request->validate($rules, $customMessages)]);
         }
 
         return response()->json(['success' => 'Product added successfully']);

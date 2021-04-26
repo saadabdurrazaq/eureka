@@ -106,7 +106,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label for="roles">Category</label><br>
-                            <select style="width:100%;" placeholder="Select Categories" name="categories[]" multiple
+                            <select multiple style="width:100%;" placeholder="Select Categories" name="categories[]"
                                 id="categories"
                                 class="categories form-control {{ $errors->first('categories') ? 'is-invalid' : '' }}"></select>
                             <div class="invalid-feedback">
@@ -128,8 +128,8 @@
                         </div>
                         <div class="col-md-10">
                             <label for="name">Photo</label>
-                            <input id="photo" name="photo" type="file" multiple
-                                class="form-control {{ $errors->first('photo') ? 'is-invalid' : '' }}"
+                            <input id="images" name="images[]" type="file" multiple
+                                class="form-control {{ $errors->first('images') ? 'is-invalid' : '' }}"
                                 data-iconName="fa fa-upload" data-overwrite-initial="false">
                             <br>
                         </div>
@@ -269,8 +269,7 @@
                     data: 'photo',
                     name: 'photo',
                     render: function(data, type, full, meta) {
-                        return "<img src=\"/reference/eureka/storage/app/" + data +
-                            "\" height=\"50\"/>";
+                        return data;
                     }
                 },
                 {
@@ -302,19 +301,18 @@
 
             var formData = new FormData();
 
-            formData.append('photo', $('#photo')[0].files[0]); // for single item
+            //formData.append('images', $('#images')[0].files[0]); // for single item
             formData.append('name', $("input[name='name']").val());
             formData.append('code', $('#code').val());
             formData.append('categories', $('#categories').val());
             formData.append('stok', $('#stok').val());
 
-            /*formData.append('_token', '{{ csrf_token() }}');
-            let TotalImages = $('#photo')[0].files.length;
-            let images = $('#photo')[0];
+            let TotalImages = $('#images')[0].files.length; //Total Images
+            let images = $('#images')[0];
             for (let i = 0; i < TotalImages; i++) {
-                formData.append('photo[]', images.files[i]);
+                formData.append('images' + i, images.files[i]);
             }
-            formData.append('photo', TotalImages);*/
+            formData.append('TotalImages', TotalImages);
 
             $.ajax({
                 url: "{{ route('products.store') }}",
@@ -322,10 +320,10 @@
                 enctype: 'multipart/form-data',
                 cache: false,
                 data: formData,
-                dataType: 'JSON',
                 contentType: false,
                 processData: false,
-                async: false,
+                dataType: 'JSON',
+                async: true,
                 headers: {
                     'Content-Type': undefined,
                 },
@@ -336,7 +334,7 @@
                 success: function(result) {
                     if (result.errors) {
                         $('.alert-danger').html(
-                            'An error in your input!'
+                            'An error in these fields! Make sure you input all fields and product code must be unique'
                         );
                         $.each(result.errors, function(key, value) {
                             $('.alert-danger').show();
@@ -351,9 +349,9 @@
                             $('.alert-success').hide();
                             location.reload();
                         }, 2000);
-                    }
+                    } //endif
                 }
-            });
+            }); //ajax
         });
 
         $('body').on('click', '#editProduct', function(e) { // .editUser exist in usercontroller.php
@@ -481,7 +479,7 @@
 
         });
 
-        $("#photo").fileinput({
+        $("#images").fileinput({
             theme: 'fa',
             uploadUrl: '{{ route('products.store') }}',
             uploadExtraData: function() {

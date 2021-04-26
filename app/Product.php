@@ -31,6 +31,10 @@ class Product extends Model
         'id', 'name', 'product_code'
     ];
 
+    /*protected $casts = [
+        'product_photo' => 'array',
+    ];*/
+
     protected $table = "products";
     protected $primaryKey = "id";
 }

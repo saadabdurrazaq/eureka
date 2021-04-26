@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 21, 2021 at 01:30 AM
+-- Generation Time: Apr 26, 2021 at 02:04 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.5
 
@@ -73,10 +73,19 @@ CREATE TABLE `categories` (
 
 INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'Peralatan Rumah Tangga', NULL, '2021-04-17 09:25:36', NULL),
-(2, 'Peralatan Kantor', '2021-04-17 09:23:10', '2021-04-17 17:38:54', NULL),
+(2, 'Peralatan Kantor', '2021-04-17 09:23:10', '2021-04-21 00:05:06', NULL),
 (3, 'Fashion', NULL, NULL, NULL),
 (4, ' Film & Musik', NULL, NULL, NULL),
-(5, 'Wedding', NULL, NULL, NULL);
+(5, 'Wedding', NULL, NULL, NULL),
+(6, 'Makanan & Minuman', NULL, NULL, NULL),
+(7, ' Buku', NULL, NULL, NULL),
+(8, ' Handphone & Tablet', NULL, NULL, NULL),
+(9, ' Kamera', NULL, NULL, NULL),
+(10, ' Kecantikan', NULL, '2021-04-21 00:08:57', '2021-04-21 00:08:57'),
+(11, ' Kesehatan', NULL, '2021-04-21 00:09:07', '2021-04-21 00:09:07'),
+(12, ' Komputer & Laptop', NULL, NULL, NULL),
+(13, ' Mainan & Hobi', NULL, NULL, NULL),
+(14, ' Olahraga', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -89,14 +98,6 @@ CREATE TABLE `category_product` (
   `product_id` int(10) UNSIGNED DEFAULT NULL,
   `category_id` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `category_product`
---
-
-INSERT INTO `category_product` (`id`, `product_id`, `category_id`) VALUES
-(37, 57, 5),
-(38, 57, 2);
 
 -- --------------------------------------------------------
 
@@ -429,19 +430,12 @@ CREATE TABLE `products` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `product_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `product_photo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `product_photo` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `register_date` date DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `products`
---
-
-INSERT INTO `products` (`id`, `name`, `product_code`, `product_photo`, `register_date`, `updated_at`, `created_at`, `deleted_at`) VALUES
-(57, 'Herbalvora', 'S01', 'public/product_images//xQqW3ySRFoix6ETsVUDEaMjiuYKO97jgem2dHTxy.jpg', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -580,8 +574,28 @@ INSERT INTO `stok` (`id`, `jumlah_barang`, `tgl_update`, `product_id`, `created_
 (16, 1, NULL, NULL, NULL, NULL, NULL),
 (20, 56, NULL, NULL, NULL, NULL, NULL),
 (21, 56, NULL, NULL, NULL, NULL, NULL),
-(23, 50, NULL, 57, NULL, '2021-04-20 16:28:04', NULL),
-(24, 56, NULL, NULL, NULL, NULL, NULL);
+(24, 56, NULL, NULL, NULL, NULL, NULL),
+(25, 56, NULL, NULL, NULL, NULL, NULL),
+(28, 55, NULL, NULL, NULL, NULL, NULL),
+(29, 55, NULL, NULL, NULL, NULL, NULL),
+(30, 58, NULL, NULL, NULL, NULL, NULL),
+(31, 59, NULL, NULL, NULL, NULL, NULL),
+(32, 56, NULL, NULL, NULL, NULL, NULL),
+(33, 54, NULL, NULL, NULL, NULL, NULL),
+(34, 50, NULL, NULL, NULL, NULL, NULL),
+(35, 50, NULL, NULL, NULL, NULL, NULL),
+(36, 50, NULL, NULL, NULL, NULL, NULL),
+(37, 50, NULL, NULL, NULL, NULL, NULL),
+(38, 50, NULL, NULL, NULL, NULL, NULL),
+(39, 50, NULL, NULL, NULL, NULL, NULL),
+(40, 50, NULL, NULL, NULL, NULL, NULL),
+(41, 50, NULL, NULL, NULL, NULL, NULL),
+(42, 50, NULL, NULL, NULL, NULL, NULL),
+(43, 50, NULL, NULL, NULL, NULL, NULL),
+(44, 50, NULL, NULL, NULL, NULL, NULL),
+(45, 50, NULL, NULL, NULL, NULL, NULL),
+(46, 56, NULL, NULL, NULL, NULL, NULL),
+(53, 50, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -726,13 +740,13 @@ ALTER TABLE `applicants`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `category_product`
 --
 ALTER TABLE `category_product`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -750,7 +764,7 @@ ALTER TABLE `permissions`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -774,7 +788,7 @@ ALTER TABLE `social_google_accounts`
 -- AUTO_INCREMENT for table `stok`
 --
 ALTER TABLE `stok`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `users`
