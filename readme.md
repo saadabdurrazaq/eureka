@@ -2,7 +2,8 @@
 
 <p align="center">
 username: seadclark@gmail.com <br>
-Passaword: 123456
+Password: 123456<br><br>
+Make sure you use SQL file update. 
 </p>
 
 ## About Laravel
