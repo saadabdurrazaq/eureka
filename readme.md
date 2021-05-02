@@ -3,7 +3,7 @@
 <p align="center">
 username: seadclark@gmail.com <br>
 Password: 123456<br><br>
-Make sure you use SQL file update. And use php artisan storage:link to show an images
+Use php artisan storage:link to show an images
 </p>
 
 ## About Laravel
