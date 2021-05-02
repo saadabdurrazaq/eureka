@@ -22,6 +22,12 @@ class Product extends Model
         return $this->hasOne('App\Stok', 'product_id', 'id'); // id refer to stok relationship.id 
     }
 
+    public function image()
+    {
+        // one product has many images (group of images)
+        return $this->hasMany('App\Image'); // id refer to image.id
+    }
+
     /** 
      * The attributes that are mass assignable.
      *
@@ -30,10 +36,6 @@ class Product extends Model
     protected $fillable = [
         'id', 'name', 'product_code'
     ];
-
-    /*protected $casts = [
-        'product_photo' => 'array',
-    ];*/
 
     protected $table = "products";
     protected $primaryKey = "id";

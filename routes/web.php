@@ -55,6 +55,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/product/{id}/edit',  ['as' => 'product.edit', 'uses' => 'ProductController@edit']); //for breadcrumbs
     Route::resource('products', 'ProductController');
     Route::delete('/product/{id}/delete-permanent', 'ProductController@deletePermanent')->name('products.delete-permanent');
+    Route::delete('/product/{id}/delete-image', 'ProductController@deleteImage')->name('products.delete-image');
 
     //Manage Users
     Route::get('/users/adminPDF', 'UserController@downloadPDF')->name('users.pdf');

@@ -10,7 +10,7 @@
 <h1>Profile</h1> 
 @endsection
 
-@section('content')
+@section('content') 
 
 @if (session('error'))
     <div class="alert alert-danger">

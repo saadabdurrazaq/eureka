@@ -32,9 +32,11 @@
             </nav>
         </div>
         <div class="col-md-6 text-right">
-            <a class="btn btn-primary" href="javascript:void(0)" style="margin-top:25px;" id="createNewProduct"> Create
+            <a class="btn btn-primary" href="javascript:void(0)" data-modal="ajaxModelForCreate" data-toggle="modal"
+                style="margin-top:25px;" id="createNewProduct">
+                Create
                 New
-                Product</a> <!-- javascript:void(0) -->
+                Product</a> <!--  href="javascript:void(0)" -->
             <a href="{{ route('categories.index') }}" style="margin-top:25px;" class="btn btn-primary">List of
                 Categories</a>
         </div>
@@ -92,7 +94,7 @@
                             </div>
                             <br>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             <label for="name">Product Name</label>
                             <input value="{{ old('name') }}"
                                 class="form-control {{ $errors->first('name') ? 'is-invalid' : '' }}"
@@ -101,6 +103,15 @@
                                 {{ $errors->first('name') }}
                             </div>
                             <br>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="name">Stok</label>
+                            <input value="{{ old('stok') }}"
+                                class="form-control {{ $errors->first('stok') ? 'is-invalid' : '' }}" placeholder=""
+                                type="text" name="stok" id="stok" />
+                            <div class="invalid-feedback">
+                                {{ $errors->first('stok') }}
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -117,23 +128,19 @@
                     </div> <!-- row-->
                     <br>
                     <div class="row">
-                        <div class="col-md-2">
-                            <label for="name">Stok</label>
-                            <input value="{{ old('stok') }}"
-                                class="form-control {{ $errors->first('stok') ? 'is-invalid' : '' }}" placeholder=""
-                                type="text" name="stok" id="stok" />
-                            <div class="invalid-feedback">
-                                {{ $errors->first('stok') }}
-                            </div>
-                        </div>
-                        <div class="col-md-10">
+                        <div class="col-md-12">
                             <label for="name">Photo</label>
-                            <input id="images" name="images[]" type="file" multiple
-                                class="form-control {{ $errors->first('images') ? 'is-invalid' : '' }}"
-                                data-iconName="fa fa-upload" data-overwrite-initial="false">
+                            <div class="file-loading">
+                                <input id="images" name="images[]" type="file" multiple>
+                            </div>
                             <br>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12" id="image_preview">
+
+                        </div>
+                    </div> <!-- row-->
                 </div>
             </div>
             <div class="col-sm-12 text-right modal-footer" style="margin-top:15px;">
@@ -145,6 +152,7 @@
     </div>
 </div>
 
+<!-- ajax model for edit and update -->
 <div class="modal fade" id="ajaxModel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -176,14 +184,33 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="ajaxModelForPhoto" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modelHeading"></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="dataPhotoElement" name="dataPhotoElement" class="form-horizontal">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('crud-js')
 <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
 <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 <!-- sweet alert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -226,8 +253,7 @@
         }
     });
 
-    $(function() {
-
+    $(document).ready(function() {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -283,11 +309,32 @@
 
         $("div.toolbar").css("float", "left");
 
-        $('#createNewProduct').click(function() {
+        $('#createNewProduct').on('click', function() {
             $('#saveBtnForCreate').val("create-product");
             $('#product_idForCreate').val('');
             $('#modelHeadingForCreate').html("Create New Product");
-            $('#ajaxModelForCreate').modal('show');
+            //$('#ajaxModelForCreate').empty();
+            //$('#ajaxModelForCreate').modal('show');
+            var idModal = $(this).data("modal");
+            $("#" + idModal).modal('show');
+        });
+
+        $("#images").change(function() {
+            $('#image_preview').html("");
+            var total_file = document.getElementById("images").files.length;
+            /*for (var i = 0; i < total_file; i++) {
+                $('#image_preview').append(
+                    "<div class='array-images' style='position:relative;float:left;margin-right:5px;'><button type='submit' style='position:absolute;top:0;left:0;top:2px;left:5px;margin-left:80px;' class='close' aria-label='Close'><span>&times;</span></button><img style='height:120px;width:105px;' src='" +
+                    URL
+                    .createObjectURL(event.target.files[i]) +
+                    "'>");
+            }*/
+        });
+
+        $(document).on('click', '.close', function() {
+            var input = $("#images");
+            input.replaceWith(input.val('').clone(true));
+            $(this).parent('div.array-images').fadeOut();
         });
 
         // Create product Ajax request.
@@ -344,11 +391,29 @@
                     } else {
                         $('.alert-danger').hide();
                         $('.alert-success').show();
+                        // no reload page
+                        table.draw();
                         $('.datatable').DataTable().ajax.reload();
+                        setInterval(function() { // remove cache image in index table
+                            $(".datatable").dataTable().fnDraw();
+                            $('.alert-success').hide();
+                            $('#ajaxModel').hide();
+                            $('#ajaxModelForCreate').hide();
+                            $('.modal-backdrop').remove();
+                            $('#images').fileinput('refresh');
+                            $('#ajaxModelForCreate').removeData();
+                            $('#code').val('');
+                            $('#name').val('');
+                            $('#stok').val('');
+                            $('#categories').empty();
+                            $("#images").fileinput('clear');
+                        }, 1200);
+                        // reload page
+                        /*$('.datatable').DataTable().ajax.reload();
                         setInterval(function() {
                             $('.alert-success').hide();
                             location.reload();
-                        }, 2000);
+                        }, 2000);*/
                     } //endif
                 }
             }); //ajax
@@ -399,6 +464,67 @@
                     $('#productForm').trigger("reset");
                     $('#modelHeading').html("Update Product");
                     $('#ajaxModel').modal('show');
+                }
+            });
+        });
+
+        $('body').on('click', '.showModalPhoto', function(e) {
+            e.preventDefault();
+            $('.alert-danger').html('');
+            $('.alert-danger').hide();
+
+            src = $(this).find('img').attr('src');
+            $('#dataPhotoElement').html(`<div class="row">
+                                            <div class="col-md-4">
+                                               <img src="${src}" style="height:500px;width:465px;margin-bottom:10px;top:0;right:0;"/>
+                                            </div>
+                                         </div>`);
+            $('#modelHeading').html("Show Photo");
+            $('#ajaxModelForPhoto').modal('show'); //show modal
+
+        });
+
+        $(document).on('click', '.close-forEdit', function() {
+            var imgId = jQuery(this).attr("id");
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "product/" + id + "/delete-image",
+                        type: "DELETE",
+                        data: {
+                            closeForEdit: $('#' + imgId).val()
+                        },
+                        error: function() {
+                            alert('Something is wrong');
+                        },
+                        success: function(data) {
+                            table.draw();
+                            setInterval(function() { // remove cache image in index table
+                                $(".datatable").dataTable().fnDraw();
+                            }, 2000);
+                            Swal.fire(
+                                'Deleted!',
+                                'Your record has been deleted.',
+                                'success'
+                            )
+                        }
+                    });
+
+                    var input = $("#photoForEdit");
+                    input.replaceWith(input.val('').clone(true));
+                    $(this).parent('div.array-images-forEdit').fadeOut();
+
+                } else {
+                    Swal.fire("Cancelled", "Your data is safe :)", "error");
                 }
             });
         });
@@ -464,7 +590,13 @@
                             alert('Something is wrong');
                         },
                         success: function(data) {
+                            //$('.datatable').DataTable().ajax.reload();
+                            // no reload page
                             table.draw();
+                            $('#images').fileinput('refresh');
+                            setInterval(function() { // remove cache image in index table
+                                $(".datatable").dataTable().fnDraw();
+                            }, 2000);
                             Swal.fire(
                                 'Deleted!',
                                 'Your record has been deleted.',
@@ -476,18 +608,31 @@
                     Swal.fire("Cancelled", "Your data is safe :)", "error");
                 }
             });
-
         });
 
         $("#images").fileinput({
-            theme: 'fa',
+            theme: 'fas',
             uploadUrl: '{{ route('products.store') }}',
+            dropZoneEnabled: false,
+            browseOnZoneClick: false,
+            showUpload: false,
+            fileActionSettings: {
+                showUpload: false,
+            },
+            previewSettings: {
+                image: {
+                    width: "auto",
+                    height: "auto",
+                    'max-width': "100%",
+                    'max-height': "100%"
+                },
+            },
             uploadExtraData: function() {
                 return {
                     _token: $("input[name='_token']").val(),
                 };
             },
-            allowedFileExtensions: ['jpg', 'png', 'gif'],
+            allowedFileExtensions: ['jpg', 'jpeg', 'png', 'gif'],
             overwriteInitial: false,
             maxFileSize: 2000,
             maxFilesNum: 5,
@@ -495,7 +640,6 @@
                 return filename.replace('(', '_').replace(']', '_');
             }
         });
-
 
     }); // END
 

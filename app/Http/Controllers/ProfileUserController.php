@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
- 
+
 use Illuminate\Http\Request;
 use App\Logic\Image\ImageRepository;
 use Illuminate\Support\Facades\File;
@@ -15,7 +15,7 @@ use App\Exports\ActiveAdminExport;
 use App\Exports\InactiveAdminExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
-use Illuminate\Validation\Validator; 
+use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\Gate;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\URL;
@@ -25,23 +25,25 @@ use App\User;
 use App\Http\Requests\ChangePasswordRequest;
 use Illuminate\Support\Facades\Auth;
 
-class ProfileUserController extends Controller {
+class ProfileUserController extends Controller
+{
 
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    public function show($username, Request $request) { 
+    public function show($username, Request $request)
+    {
         $show['data'] = \App\User::where('username', auth()->user()->username)->first();
         $data = \App\User::where('username', auth()->user()->username)->first();
 
         $tab2 = "tab2";
 
-        if($request->ajax()){
+        if ($request->ajax()) {
             return \Response::json($show);
         }
-        return view('profile.show', ['users' => $data], compact(['tab2']));   
+        return view('profile.show', ['users' => $data], compact(['tab2']));
     }
 
     public function update(Request $request, $id)
@@ -53,16 +55,16 @@ class ProfileUserController extends Controller {
         ]);
 
         if ($validator->fails()) {
-            return redirect()->to('/profile/'.$username.'/#detail')->withInput()->withErrors($validator);
-        } 
+            return redirect()->to('/profile/' . $username . '/#detail')->withInput()->withErrors($validator);
+        }
 
         $user = \App\User::findOrFail($id);
 
-        $user->name = $request->get('name'); 
-        
-        if($request->file('file')) {
-            if($user->avatar && file_exists(storage_path('app/public/' . $user->avatar) ) ) {
-                \Storage::delete('public/'.$user->avatar);
+        $user->name = $request->get('name');
+
+        if ($request->file('file')) {
+            if ($user->avatar && file_exists(storage_path('app/public/' . $user->avatar))) {
+                \Storage::delete('public/' . $user->avatar);
             }
             $imagename = $request->file('file')->store('avatars', 'public');
             $user->avatar = $imagename;
@@ -70,16 +72,17 @@ class ProfileUserController extends Controller {
 
         $user->save();
 
-        return redirect()->to('/profile/'.$username.'/#detail')->with('status', 'User succesfully updated');   
+        return redirect()->to('/profile/' . $username . '/#detail')->with('status', 'User succesfully updated');
     }
 
-    public function deleteAvatar($id) {
+    public function deleteAvatar($id)
+    {
         $category = \App\User::where('id', $id);
         $category->update(['avatar' => null]);
 
         $id = \App\User::select(['username'])->where('username', auth()->user()->username)->first();
-      
-        return redirect()->to('/profile/'.$id.'/#detail')->with('status', 'Photo succesfully deleted');   
+
+        return redirect()->to('/profile/' . $id . '/#detail')->with('status', 'Photo succesfully deleted');
     }
 
     public function changePassword()
@@ -88,7 +91,7 @@ class ProfileUserController extends Controller {
             ['email' => Auth::user()->email]
         );
     }
- 
+
     public function postChangePassword(Request $request)
     {
         $username = \App\User::select(['username'])->where('username', auth()->user()->username)->first();
@@ -100,22 +103,18 @@ class ProfileUserController extends Controller {
         ]);
 
         if ($validator->fails()) {
-            return redirect()->to('/profile/'.$username.'/#changepassword')->withInput()->withErrors($validator);
-        } 
+            return redirect()->to('/profile/' . $username . '/#changepassword')->withInput()->withErrors($validator);
+        }
 
-    	if(Auth::Check())
-  	    {	 
-            if(\Hash::check($request->current_password, Auth::User()->password))
-               {
-    			$user = User::find(Auth::user()->id)->update(["password" => bcrypt($request->password)]);    	
-  			}
-  			else {
-                  return redirect()->to('/profile/'.$username.'/#changepassword')->with('alert-danger', 'Incorrect current password!'); 
-  			}
-  		}
+        if (Auth::Check()) {
+            if (\Hash::check($request->current_password, Auth::User()->password)) {
+                $user = User::find(Auth::user()->id)->update(["password" => bcrypt($request->password)]);
+            } else {
+                return redirect()->to('/profile/' . $username . '/#changepassword')->with('alert-danger', 'Incorrect current password!');
+            }
+        }
         $msg = 'Password was changed successfully. Please login to continue';
         $request->session()->flash('success',  $msg);
-        return redirect('login')->with(Auth::logout());  
+        return redirect('login')->with(Auth::logout());
     }
-    
 }

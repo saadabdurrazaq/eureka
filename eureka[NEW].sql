@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 26, 2021 at 02:04 AM
+-- Generation Time: May 02, 2021 at 04:31 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.5
 
@@ -102,6 +102,21 @@ CREATE TABLE `category_product` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `images`
+--
+
+CREATE TABLE `images` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_id` int(10) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `migrations`
 --
 
@@ -131,7 +146,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (13, '2021_04_17_150520_products_categories', 10),
 (14, '2021_04_17_151237_stok', 11),
 (15, '2021_04_17_151724_stok_products', 12),
-(16, '2021_04_17_151237_stek', 13);
+(16, '2021_04_17_151237_stek', 13),
+(17, '2021_04_30_221849_images', 14);
 
 -- --------------------------------------------------------
 
@@ -430,7 +446,6 @@ CREATE TABLE `products` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `product_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `product_photo` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `register_date` date DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -566,37 +581,6 @@ CREATE TABLE `stok` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `stok`
---
-
-INSERT INTO `stok` (`id`, `jumlah_barang`, `tgl_update`, `product_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(16, 1, NULL, NULL, NULL, NULL, NULL),
-(20, 56, NULL, NULL, NULL, NULL, NULL),
-(21, 56, NULL, NULL, NULL, NULL, NULL),
-(24, 56, NULL, NULL, NULL, NULL, NULL),
-(25, 56, NULL, NULL, NULL, NULL, NULL),
-(28, 55, NULL, NULL, NULL, NULL, NULL),
-(29, 55, NULL, NULL, NULL, NULL, NULL),
-(30, 58, NULL, NULL, NULL, NULL, NULL),
-(31, 59, NULL, NULL, NULL, NULL, NULL),
-(32, 56, NULL, NULL, NULL, NULL, NULL),
-(33, 54, NULL, NULL, NULL, NULL, NULL),
-(34, 50, NULL, NULL, NULL, NULL, NULL),
-(35, 50, NULL, NULL, NULL, NULL, NULL),
-(36, 50, NULL, NULL, NULL, NULL, NULL),
-(37, 50, NULL, NULL, NULL, NULL, NULL),
-(38, 50, NULL, NULL, NULL, NULL, NULL),
-(39, 50, NULL, NULL, NULL, NULL, NULL),
-(40, 50, NULL, NULL, NULL, NULL, NULL),
-(41, 50, NULL, NULL, NULL, NULL, NULL),
-(42, 50, NULL, NULL, NULL, NULL, NULL),
-(43, 50, NULL, NULL, NULL, NULL, NULL),
-(44, 50, NULL, NULL, NULL, NULL, NULL),
-(45, 50, NULL, NULL, NULL, NULL, NULL),
-(46, 56, NULL, NULL, NULL, NULL, NULL),
-(53, 50, NULL, NULL, NULL, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -630,7 +614,7 @@ INSERT INTO `users` (`id`, `name`, `username`, `gender`, `email`, `email_verifie
 (1, 'Hardik Savani', 'hardik', 'Male', 'admin@gmail.com', NULL, '081574289012', '$2y$10$0xuL2omfShrYy/YdoNUbs.xsvkK/nNNi3NrhHbBkclQGRbI4QtOFK', NULL, 0, '2020-04-15 14:34:10', '0', '2020-05-13 19:33:01', NULL, NULL, 'ACTIVE'),
 (3, 'Comfoodtable Official', 'comfoodtable', 'Male', 'comfoodtableofficial@gmail.com', NULL, '085217418065', '$2y$10$O.UEOajkhvzEvdGyGETSJOIasCpalAdWgSPiQH6pe6ajqb8OKGQAi', NULL, 0, '2020-04-15 18:14:05', '0', '2020-04-15 18:14:05', NULL, NULL, 'ACTIVE'),
 (8, 'Fatria Hidayat', 'fatriahidayat', 'Male', 'fatratourofficial@gmail.com', NULL, '081931895364', '$2y$10$sulUH9Hu.Jm00p5UnHe2h.Deb7bWTL46VujcRiBbiWsoFeM4m8gXa', NULL, 0, '2020-05-10 19:04:53', '0', '2020-05-10 19:04:53', NULL, NULL, 'ACTIVE'),
-(105, 'Saad Abdurrazaq', 'saadabdurrazaq', 'Male', 'seadclark@gmail.com', '2020-05-12 02:43:59', '085624853448', '$2y$10$eDGtwfUKMduKueeyrfVBAeRBq60QiqAgIJN0dYoOq2H4m7milDDVe', NULL, 0, '2020-05-12 02:42:11', '0', '2021-02-16 05:01:05', NULL, 'avatars/2tPLeT1BqM1GAEqGxd2hbPVfbLECdxTUwOoEc9bk.jpeg', 'ACTIVE'),
+(105, 'Saad Abdurrazaq', 'saadabdurrazaq', 'Male', 'seadclark@gmail.com', '2020-05-12 02:43:59', '085624853448', '$2y$10$eDGtwfUKMduKueeyrfVBAeRBq60QiqAgIJN0dYoOq2H4m7milDDVe', NULL, 0, '2020-05-12 02:42:11', '0', '2021-05-01 06:03:22', NULL, NULL, 'ACTIVE'),
 (114, 'John Doe', 'johndoe', 'Male', 'john@doe.com', NULL, '085624853449', '$2y$10$mukJA9TtqRaJPFHo2N6S6u1O9M0F9tUsupqMdtur./OatWAZmC0FG', NULL, 0, '2020-05-13 16:06:23', NULL, '2020-05-13 16:07:09', NULL, NULL, 'ACTIVE'),
 (116, 'Kelly Clare', 'kellyclare', 'Male', 'kelly@clare.com', NULL, '087854218743', '$2y$10$pt/NjTXZEi1CiTTY1919s.plEZbqMFroys2rjRJD0KmY8dY9monuC', NULL, 0, '2020-05-13 20:27:36', NULL, '2020-05-13 20:27:36', NULL, NULL, 'ACTIVE');
 
@@ -657,6 +641,13 @@ ALTER TABLE `category_product`
   ADD PRIMARY KEY (`id`),
   ADD KEY `products_categories_products_id_index` (`product_id`),
   ADD KEY `products_categories_categories_id_index` (`category_id`);
+
+--
+-- Indexes for table `images`
+--
+ALTER TABLE `images`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `images_product_id_index` (`product_id`);
 
 --
 -- Indexes for table `migrations`
@@ -746,13 +737,19 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `category_product`
 --
 ALTER TABLE `category_product`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=200;
+
+--
+-- AUTO_INCREMENT for table `images`
+--
+ALTER TABLE `images`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `permissions`
@@ -764,7 +761,7 @@ ALTER TABLE `permissions`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=221;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -788,7 +785,7 @@ ALTER TABLE `social_google_accounts`
 -- AUTO_INCREMENT for table `stok`
 --
 ALTER TABLE `stok`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -806,6 +803,12 @@ ALTER TABLE `users`
 ALTER TABLE `category_product`
   ADD CONSTRAINT `products_categories_categories_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `products_categories_products_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `images`
+--
+ALTER TABLE `images`
+  ADD CONSTRAINT `images_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 
 --
 -- Constraints for table `model_has_permissions`

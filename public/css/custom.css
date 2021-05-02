@@ -66,3 +66,9 @@
 .fileinput-upload{
   display: none;
 }
+.krajee-default.file-preview-frame {
+  width: 205px;
+}
+.file-preview-image {
+  margin-right: 20px;
+}
