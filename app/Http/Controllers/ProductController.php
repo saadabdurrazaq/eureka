@@ -128,7 +128,7 @@ class ProductController extends Controller
                 $product_photo = $request->file('images')->store($destinationPath);
             }*/
 
-            if ($request->TotalImages > 0 && $request->get('categories') > 0) {
+            if (($request->TotalImages > 0 && $request->TotalImages < 6) && $request->get('categories') > 0) {
 
                 // insert product
                 $productId = DB::table('products')->insertGetId(
@@ -178,14 +178,19 @@ class ProductController extends Controller
 
                 // Save relationship data between stok and product
                 $stokId->product()->associate($theProductId)->save();
-            } else {
+            } else 
+            if ($request->TotalImages == 0 && $request->TotalImages > 5) {
                 $imageValidator = \Validator::make($request->all(), [
                     'images' => 'required|file|mimes:jpeg,png,jpg,gif,svg',
+                ]);
+                return response()->json(['errors' => $imageValidator->errors()->all()]);
+            } else {
+                $imageValidator = \Validator::make($request->all(), [
                     'categories' => 'required',
                 ]);
                 return response()->json(['errors' => $imageValidator->errors()->all()]);
             }
-        } else {
+        } else { //$checkProductCode
             $rules = [
                 'code' => 'required',
             ];
@@ -237,12 +242,18 @@ class ProductController extends Controller
                   placeholder="Product Code" type="text" name="code" id="codeForEdit" readonly/>
               <br>
            </div>
-           <div class="col-md-8">
+           <div class="col-md-6">
                             <label for="name">Product Name</label>
                             <input value="' . $product->name . '"
                                 class="form-control"
                                 placeholder="Product name" type="text" name="nameForEdit" id="nameForEdit" />
                             <br>
+            </div>
+            <div class="col-md-2">
+                            <label for="name">Stok</label>
+                            <input value="' . $product->stok->jumlah_barang . '"
+                                class="form-control stokForEdit" placeholder=""
+                                type="text" name="stokForEdit" id="stokForEdit" />
             </div>
         </div>
         <div class="row">
@@ -256,18 +267,10 @@ class ProductController extends Controller
         </div> <!-- row-->
         <br> 
         <div class="row">
-                        <div class="col-md-2">
-                            <label for="name">Stok</label>
-                            <input value="' . $product->stok->jumlah_barang . '"
-                                class="form-control stokForEdit" placeholder=""
-                                type="text" name="stokForEdit" id="stokForEdit" />
-                        </div>
-                        <div class="col-md-10">
+                        <div class="col-md-12">
                             <label for="name">Photo</label>
                             <div class="file-loading">
-                               <input id="photoForEdit" name="photoForEdit[]" type="file" multiple
-                                   class="file photoForEdit"
-                                   data-show-preview="false"/>
+                               <input id="photoForEdit" name="photoForEdit[]" type="file" multiple/>
                             </div>
                             <br>
                         </div>
@@ -298,6 +301,60 @@ class ProductController extends Controller
         return response()->json(['success' => 'Product image deleted successfully.']);
     }
 
+    public function updateTexts($id)
+    {
+        $product = \App\Product::withTrashed()->findOrFail($id);
+
+        $productName = $this->request->get('nameForEdit');
+        $categories = $this->request->get('categoriesForEdit');
+        $jumlahBarang = $this->request->get('stokForEdit');
+
+        // Save product
+        $product->name = $productName;
+        $product->save();
+
+        $categories = explode(",", $categories);
+
+        // Assign categories
+        $product->category()->sync($categories);
+
+        // Update stok
+        $stokBarang = \App\Stok::with('product')
+            ->WhereHas('product', function ($q) use ($id) {
+                $q->where('id', $id);
+            });
+        $stokBarang->update(['jumlah_barang' => $jumlahBarang]);
+    }
+
+    public function updateAllData($id)
+    {
+        // insert image and save relationship data between product and image
+        for ($x = 0; $x < $this->request->TotalImages; $x++) {
+            if ($this->request->hasFile('images' . $x)) {
+                $file = $this->request->file('images' . $x);
+
+                $path = $file->store('public/product_images/');
+                $name = $file->getClientOriginalName();
+
+                $product_photo[$x]['name'] = $name;
+                $product_photo[$x]['path'] = $path;
+            }
+        }
+
+        $convertString = json_encode($product_photo); //object to json string conversion
+        $images = json_decode($convertString); // json string to array
+
+        foreach ($images as $image) {
+            $imageId = \App\Image::insertGetId([
+                'name'    => json_encode($image)
+            ]);
+            $selectedImage = \App\Image::where('id', $imageId);
+            $selectedImage->update(['product_id' => $id]);
+        }
+
+        $this->updateTexts($id);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -307,37 +364,48 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = \App\Product::findOrFail($id);
-
         $validator = \Validator::make($request->all(), [
             'nameForEdit' => 'required',
             'categoriesForEdit' => 'required',
             'stokForEdit' => 'required|numeric',
-            //'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $imageValidator = \Validator::make($request->all(), [
+            'photoForEdit' => 'required|file|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()]);
         }
 
-        $productName = $request->get('nameForEdit');
-        $categories = $request->get('categoriesForEdit');
-        $jumlahBarang = $request->get('stokForEdit');
-
-        $user->name = $productName;
-        $user->save();
-
-        $theProductId = \App\Product::withTrashed()->findOrFail($id);
-
-        // Assign categories
-        $theProductId->category()->sync($categories);
-
-        // Update stok
-        $stokBarang = \App\Stok::with('product')
+        $storedImages = \App\Image::with('product')
             ->WhereHas('product', function ($q) use ($id) {
                 $q->where('id', $id);
-            });
-        $stokBarang->update(['jumlah_barang' => $jumlahBarang]);
+            })->count();
+
+        $countAllImgs = (int)$this->request->TotalImages + $storedImages;
+
+        if ($storedImages == 0) {
+            if ($request->TotalImages > 0) {
+                if ($countAllImgs <= 5) {
+                    $this->updateAllData($id);
+                } else {
+                    return response()->json(['errors' => $imageValidator->errors()->all()]);
+                }
+            } else {
+                return response()->json(['errors' => $imageValidator->errors()->all()]);
+            }
+        } else {
+            if ($request->TotalImages > 0) {
+                if ($countAllImgs <= 5) {
+                    $this->updateAllData($id);
+                } else {
+                    return response()->json(['errors' => $imageValidator->errors()->all()]);
+                }
+            } else {
+                $this->updateTexts($id);
+            }
+        }
 
         return response()->json(['success' => 'Product updated successfully']);
     }
@@ -400,17 +468,5 @@ class ProductController extends Controller
         );
         $content =  view('products.pdf', ['user' => $user])->render();
         return \Response::make($content, 200, $headers);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $user = Product::find($id);
-        return view('users.show', compact('user'));
     }
 }

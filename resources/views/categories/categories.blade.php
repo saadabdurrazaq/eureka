@@ -133,14 +133,8 @@
 @endsection
 
 @section('crud-js')
-<link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
 <!-- sweet alert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
@@ -160,6 +154,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
     integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
     crossorigin="anonymous"></script>
+<!-- select2 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 
 <script type="text/javascript">
     $('#name').tokenfield({
@@ -178,6 +175,17 @@
             processing: true,
             serverSide: true,
             responsive: true,
+            fixedColumns: true,
+            "lengthMenu": [50, 100, 500, 1000, 2000, 5000, 10000, 50000, 100000],
+            "sPaginationType": "full_numbers",
+            "oLanguage": {
+                "oPaginate": {
+                    "sFirst": "«", // This is the link to the first page
+                    "sPrevious": "❮", // This is the link to the previous page
+                    "sNext": "❯", // This is the link to the next page
+                    "sLast": "»" // This is the link to the last page
+                }
+            },
             ajax: "{{ route('categories.index') }}",
             dom: '<l<"toolbar">f>rtip',
             initComplete: function() {

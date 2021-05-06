@@ -13,10 +13,10 @@ class Category extends Model
 {
     use SoftDeletes; //trash user 
 
-    public function product() // parent 
+    public function product() // parent  
     {
         // one job only belongs to one type of job
-        return $this->belongsToMany('App\Product'); 
+        return $this->belongsToMany('App\Product');
     }
 
     protected $guard_name = 'web';

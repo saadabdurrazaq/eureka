@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 02, 2021 at 04:31 PM
+-- Generation Time: May 06, 2021 at 05:13 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.5
 
@@ -81,8 +81,8 @@ INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`, `deleted_at`
 (7, ' Buku', NULL, NULL, NULL),
 (8, ' Handphone & Tablet', NULL, NULL, NULL),
 (9, ' Kamera', NULL, NULL, NULL),
-(10, ' Kecantikan', NULL, '2021-04-21 00:08:57', '2021-04-21 00:08:57'),
-(11, ' Kesehatan', NULL, '2021-04-21 00:09:07', '2021-04-21 00:09:07'),
+(10, ' Kecantikan', NULL, '2021-04-21 00:08:57', NULL),
+(11, ' Kesehatan', NULL, '2021-04-21 00:09:07', NULL),
 (12, ' Komputer & Laptop', NULL, NULL, NULL),
 (13, ' Mainan & Hobi', NULL, NULL, NULL),
 (14, ' Olahraga', NULL, NULL, NULL);
@@ -99,6 +99,17 @@ CREATE TABLE `category_product` (
   `category_id` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `category_product`
+--
+
+INSERT INTO `category_product` (`id`, `product_id`, `category_id`) VALUES
+(258, 270, 5),
+(301, 286, 13),
+(302, 286, 14),
+(311, 276, 10),
+(312, 276, 11);
+
 -- --------------------------------------------------------
 
 --
@@ -113,6 +124,15 @@ CREATE TABLE `images` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `images`
+--
+
+INSERT INTO `images` (`id`, `name`, `product_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(139, '{\"name\":\"555dca050423bda8418b4567.jpeg\",\"path\":\"public\\/product_images\\/\\/nAerToLgDEuvAL8tmz4nbYXov6mWngUydTp7GqLW.jpg\"}', 270, NULL, '2021-05-04 17:23:59', NULL),
+(170, '{\"name\":\"fck.png\",\"path\":\"public\\/product_images\\/\\/3biDBwKSGFVl32Wy7QoAvkiBonMsWbvKxO7dFMKR.png\"}', 276, NULL, '2021-05-05 00:36:27', NULL),
+(173, '{\"name\":\"productquickview_6.png\",\"path\":\"public\\/product_images\\/\\/LTAMUpBfNsQVUwxLQHSeOfNEJkKCnUkO4SMFJWhw.png\"}', 286, NULL, '2021-05-05 02:16:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -452,6 +472,15 @@ CREATE TABLE `products` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`id`, `name`, `product_code`, `register_date`, `updated_at`, `created_at`, `deleted_at`) VALUES
+(270, 'Herbalvora', 'S01', NULL, '2021-05-04 18:36:21', NULL, NULL),
+(276, 'Kevin Brown', 'S03', NULL, NULL, NULL, NULL),
+(286, 'Sugeng Handoyo', 'S02', NULL, NULL, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -580,6 +609,15 @@ CREATE TABLE `stok` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `stok`
+--
+
+INSERT INTO `stok` (`id`, `jumlah_barang`, `tgl_update`, `product_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(232, 50, NULL, 270, NULL, '2021-05-06 07:15:53', NULL),
+(237, 50, NULL, 276, NULL, '2021-05-06 07:49:41', NULL),
+(247, 40, NULL, 286, NULL, '2021-05-06 07:52:06', NULL);
 
 -- --------------------------------------------------------
 
@@ -737,13 +775,13 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `category_product`
 --
 ALTER TABLE `category_product`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=200;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=317;
 
 --
 -- AUTO_INCREMENT for table `images`
 --
 ALTER TABLE `images`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -761,7 +799,7 @@ ALTER TABLE `permissions`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=221;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=294;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -785,7 +823,7 @@ ALTER TABLE `social_google_accounts`
 -- AUTO_INCREMENT for table `stok`
 --
 ALTER TABLE `stok`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=255;
 
 --
 -- AUTO_INCREMENT for table `users`
