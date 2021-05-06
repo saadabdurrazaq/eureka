@@ -7,5 +7,5 @@ Use php artisan storage:link to show an images
 </p>
 
 ## About Eureka
-Eureka is just another example of CRUD (including one to one, one to many, and many to many relationship) without reloading page. Built with Laravel, AJAX and jQuery Datatables.
+Eureka is just another example of CRUD (texts and images including one to one, one to many, and many to many relationship) without reloading page. Built with Laravel, AJAX and jQuery Datatables.
 
