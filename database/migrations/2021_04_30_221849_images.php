@@ -13,6 +13,7 @@ class Images extends Migration
      */
     public function up()
     {
+        // adding a new table (images)
         Schema::create('images', function (Blueprint $table) {
             $table->increments('id');
             $table->string("name");
