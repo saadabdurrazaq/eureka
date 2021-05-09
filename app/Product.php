@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use SoftDeletes; //trash user 
+    use SoftDeletes;
 
     protected $guard_name = 'web';
 

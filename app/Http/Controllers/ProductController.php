@@ -56,6 +56,10 @@ class ProductController extends Controller
 
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->addColumn('checkbox', function ($row) {
+                    $btn = '<td style="text-align:center;"><input type="checkbox" id="select" class="sub_chk" data-id="' . $row->id . '" value="' . $row->id . '" name="selected_values[]"/></td>';
+                    return $btn;
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editProduct" id="editProduct">Edit</a>';
                     $btn = $btn . ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-danger btn-sm deleteProduct">Delete</a>';
@@ -85,7 +89,7 @@ class ProductController extends Controller
                     $pict = implode(', ', $pict);
                     return $pict;
                 })
-                ->rawColumns(['action', 'categories', 'stok', 'photo'])
+                ->rawColumns(['action', 'categories', 'stok', 'photo', 'checkbox'])
                 ->make(true);
         }
 
@@ -410,7 +414,7 @@ class ProductController extends Controller
         return response()->json(['success' => 'Product updated successfully']);
     }
 
-    public function deletePermanent($id)
+    public function deleteProduct($id)
     {
         $theProduct = \App\Product::findOrFail($id);
 
@@ -443,6 +447,31 @@ class ProductController extends Controller
 
         // Delete product
         $theProduct->forceDelete();
+    }
+
+    public function deletePermanent($id)
+    {
+        $theProduct = \App\Product::findOrFail($id);
+
+        if ($theProduct) {
+            $this->deleteProduct($id);
+            return response()->json(['success' => 'Product deleted successfully.']);
+        }
+    }
+
+    public function deleteMultiple(Request $request)
+    {
+        $get_ids = $request->ids;
+        $ids = explode(',', $get_ids);
+
+        // precess request one by one
+        foreach ($ids as $id) {
+            $theProduct = \App\Product::findOrFail($id);
+
+            if ($theProduct) {
+                $this->deleteProduct($id);
+            }
+        }
 
         return response()->json(['success' => 'Product deleted successfully.']);
     }

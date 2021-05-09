@@ -33,7 +33,8 @@
                                 href="{{ route('users.index') }}">All ({{ $count }})</a></li>
                         <li><a class="menu" href="{{ route('users.trash') }}">Trash ({{ $countTrash }})</a></li>
                         <li><a class="menu" href="{{ route('users.active') }}">Active ({{ $activeStatus }})</a></li>
-                        <li><a class="menu" href="{{ route('users.inactive') }}">Inactive ({{ $inactiveStatus }})</a>
+                        <li><a class="menu" href="{{ route('users.inactive') }}">Inactive
+                                ({{ $inactiveStatus }})</a>
                         </li>
                     </ul>
                 </nav>

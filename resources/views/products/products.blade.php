@@ -46,6 +46,7 @@
         <table class="table table-bordered table-hover data-table dataTable" style="width:100%;">
             <thead>
                 <tr>
+                    <th style="text-align:center;"><input type="checkbox" id="select-all" /></th>
                     <th>No</th>
                     <th>Code</th>
                     <th>Product Name</th>
@@ -278,10 +279,15 @@
             dom: '<l<"toolbar">f>rtip',
             initComplete: function() { // must be exist, because if this removed, no response after any submit
                 $("div.toolbar").html(
-                    '<div style="float:left;margin-left:4px;"><select class="form-control select2bs4 trash_all" style="width:140px;height:32px;margin-left:10px;" data-select2-id="17" tabindex="-1" aria-hidden="true"><option selected="selected" data-select2-id="19">Bulk Actions</option><option data-select2-id="38" value="trashAll">Trash</option></select></div><div style="float:left;margin-left:20px;"><select onchange="window.location = this.options[this.selectedIndex].value" class="form-control select2bs4 download-doc" style="width:140px;height:32px;margin-left:10px;padding-bottom:5px"" data-select2-id="17" tabindex="-1" aria-hidden="true"><option selected="selected" data-select2-id="19" value="{{ route('products.index') }}">Download</option><option data-select2-id="38" value="{{ route('products.pdf') }}">PDF</option><option data-select2-id="39" value="{{ route('products.excel') }}">XLS</option><option data-select2-id="39" value="{{ route('products.word') }}">Doc</option></select></div>'
+                    '<div class="delete" style="float:left;margin-left:4px;"><select class="form-control select2bs4 delete-multiple" style="width:140px;height:32px;margin-left:10px;" data-select2-id="17" tabindex="-1" aria-hidden="true"><option selected="selected" data-select2-id="19">Bulk Actions</option><option data-select2-id="38" value="deletePermanent">Delete Permanent</option></select></div>   <div style="float:left;margin-left:20px;"><select onchange="window.location = this.options[this.selectedIndex].value" class="form-control select2bs4 download-doc" style="width:140px;height:32px;margin-left:10px;padding-bottom:5px"" data-select2-id="17" tabindex="-1" aria-hidden="true"><option selected="selected" data-select2-id="19" value="{{ route('products.index') }}">Download</option><option data-select2-id="38" value="{{ route('products.pdf') }}">PDF</option><option data-select2-id="39" value="{{ route('products.excel') }}">XLS</option><option data-select2-id="39" value="{{ route('products.word') }}">Doc</option></select></div>'
                 );
             },
             columns: [{
+                    data: "checkbox",
+                    orderable: false,
+                    searchable: false
+                },
+                {
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
                 },
@@ -806,6 +812,87 @@
                     Swal.fire("Cancelled", "Your data is safe :)", "error");
                 }
             });
+        });
+
+        //Checkbox
+        $('#select-all').on('click', function(e) {
+            if ($(this).is(':checked', true)) {
+                $(".sub_chk").prop('checked', true);
+            } else {
+                $(".sub_chk").prop('checked', false);
+            }
+        });
+
+        $(document).on('change', '.delete-multiple', function(e) {
+
+            console.log(e);
+
+            if ($(this).val() == "deletePermanent") {
+
+                var allVals = [];
+                $(".sub_chk:checked").each(function() {
+                    allVals.push($(this).attr('data-id'));
+                });
+
+                if (allVals.length <= 0) {
+                    alert("Please select row.");
+                } else {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            var join_selected_values = allVals.join(",");
+
+                            $.ajax({
+                                url: '{{ url('product-deleteMultiple') }}',
+                                type: 'get',
+                                data: 'ids=' + join_selected_values,
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                        'content')
+                                },
+                                beforeSend: function() {
+                                    swal.fire({
+                                        html: '<h5>Loading...</h5>',
+                                        showConfirmButton: false,
+                                        onRender: function() {
+                                            $('.swal2-content').prepend(
+                                                sweet_loader);
+                                        }
+                                    });
+                                },
+                                error: function() {
+                                    alert('Something is wrong');
+                                },
+                                success: function(data) {
+                                    // no reload page
+                                    table.draw();
+                                    setInterval(function() { // remove cache image in index table
+                                        $(".datatable").dataTable()
+                                            .fnDraw();
+                                    }, 2000);
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'Your record has been deleted.',
+                                        'success'
+                                    )
+                                }
+                            });
+                        } else {
+                            Swal.fire("Cancelled", "Your data is safe :)", "error");
+                        }
+                    });
+                }
+            } else {
+                console.log(e);
+            }
         });
 
         // trigger bootstrap file input for create in order to function normally

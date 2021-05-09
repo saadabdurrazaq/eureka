@@ -15,9 +15,8 @@ class Image extends Model
 
     protected $guard_name = 'web';
 
-    public function product() // parent   
+    public function product()
     {
-        // one student only belongs to one teacher
         return $this->belongsTo('App\Product');
     }
 

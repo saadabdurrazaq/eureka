@@ -56,6 +56,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('products', 'ProductController');
     Route::delete('/product/{id}/delete-permanent', 'ProductController@deletePermanent')->name('products.delete-permanent');
     Route::delete('/product/{id}/delete-image', 'ProductController@deleteImage')->name('products.delete-image');
+    Route::get('product-deleteMultiple', 'ProductController@deleteMultiple');
 
     //Manage Users
     Route::get('/users/adminPDF', 'UserController@downloadPDF')->name('users.pdf');
